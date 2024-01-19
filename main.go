@@ -1,13 +1,19 @@
 package main
 
 import (
+	"os"
+
 	"github.com/sing3demons/service-upload-file/handler"
 	"github.com/sing3demons/service-upload-file/logger"
 	"github.com/sing3demons/service-upload-file/router"
 )
 
 func main() {
-
+	_, err := os.Create("/tmp/live")
+	if err != nil {
+		os.Exit(1)
+	}
+	defer os.Remove("/tmp/live")
 	log := logger.NewLogger()
 	defer log.Sync()
 

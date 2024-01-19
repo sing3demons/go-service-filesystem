@@ -89,7 +89,7 @@ func (ms *router) StartHttp() {
 
 	srv := &http.Server{
 		Handler:      ms.Router,
-		Addr:         "127.0.0.1:8080",
+		Addr:         ":8080",
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
