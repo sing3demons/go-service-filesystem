@@ -14,7 +14,17 @@ func main() {
 	r := router.NewMicroservice(log)
 	h := handler.NewFiles()
 
+	// os.MkdirAll("./imagestore", os.ModePerm)
+
 	r.Static("/images")
+
+	r.GET("/", func(c router.IContext) {
+		c.JSON(200, "OK")
+	})
+
+	r.GET("/healthz", func(c router.IContext) {
+		c.JSON(200, "OK")
+	})
 
 	r.GET("/files/{container}", h.GetFiles)
 

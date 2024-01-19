@@ -48,7 +48,7 @@ func (f *Files) UploadMultipart(ctx router.IContext) {
 
 	if err != nil {
 		log.Error("bad request", logger.LoggerFields{"error": err})
-		ctx.JSON(http.StatusBadRequest, "Invalid id, must be an integer")
+		ctx.JSON(http.StatusBadRequest, "invalid id, must be an integer")
 		return
 	}
 
