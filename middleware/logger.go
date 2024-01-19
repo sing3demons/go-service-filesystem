@@ -6,9 +6,10 @@ import (
 )
 
 func L(c router.IContext) logger.ILogger {
-	switch logger := c.Get("logger").(type) {
+	switch logg := c.Get(logger.Key).(type) {
 	case logger.ILogger:
-		return logger
+		return logg
+	default:
+		return logger.NewLogger()
 	}
-	return nil
 }

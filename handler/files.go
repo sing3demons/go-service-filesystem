@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/sing3demons/service-upload-file/logger"
@@ -12,8 +13,7 @@ import (
 )
 
 // Files is a handler for reading and writing files
-type Files struct {
-}
+type Files struct{}
 
 // NewFiles creates a new File handler
 func NewFiles() *Files {
@@ -103,6 +103,7 @@ func (f *Files) GetFiles(ctx router.IContext) {
 			Href: file.Href,
 		})
 	}
+
 	ctx.JSON(http.StatusOK, resp)
 }
 
@@ -114,4 +115,19 @@ type File struct {
 	Mode    string `json:"mode,omitempty"`
 	ModTime string `json:"mod_time,omitempty"`
 	Href    string `json:"href,omitempty"`
+}
+
+func (f *Files) GetFile(ctx router.IContext) {
+	log := middleware.L(ctx)
+
+	pwd, err := os.Getwd()
+
+	streamFileBytes, err := os.ReadFile(filepath.Join(pwd, "imagestore", ctx.Param("container"), ctx.Param("id")))
+	if err != nil {
+		log.Error("Bad request", logger.LoggerFields{"error": err})
+		ctx.JSON(400, "Invalid id, must be an integer")
+		return
+	}
+	log.Info("Handle GET", logger.LoggerFields{"container": ctx.Param("container"), "id": ctx.Param("id")})
+	ctx.JSON(200, streamFileBytes)
 }

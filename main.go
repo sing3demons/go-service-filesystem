@@ -19,6 +19,7 @@ func main() {
 	r.GET("/files/{container}", h.GetFiles)
 
 	r.POST("/upload", h.UploadMultipart)
+	r.GET("/stream/{container}/{id}", h.GetFile)
 
 	r.StartHttp()
 }

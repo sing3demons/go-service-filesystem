@@ -12,7 +12,7 @@ import (
 )
 
 type contextKey string
-const key contextKey = "logger"
+const Key = "logger"
 
 func Middleware(logger ILogger) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
@@ -39,7 +39,7 @@ func LogParentID(r *http.Request, logger ILogger) ILogger {
 }
 
 func setLoggerContext(r *http.Request, val ILogger) *http.Request {
-	return r.WithContext(context.WithValue(r.Context(), key, val))
+	return r.WithContext(context.WithValue(r.Context(), Key, val))
 }
 
 func getMACAndIP() MacIP {
