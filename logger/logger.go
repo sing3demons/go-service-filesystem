@@ -18,6 +18,7 @@ type ILogger interface {
 	Error(msg string, fields ...LoggerFields)
 
 	Sync() error
+	With(fields ...zapcore.Field) ILogger
 }
 
 func NewLogger() ILogger {
@@ -69,4 +70,8 @@ func (l *logger) Error(msg string, fields ...LoggerFields) {
 		}
 	}
 	l.Logger.Error(msg, f...)
+}
+
+func (l *logger) With(fields ...zapcore.Field) ILogger {
+	return &logger{l.Logger.With(fields...)}
 }

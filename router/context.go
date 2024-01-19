@@ -8,6 +8,7 @@ type IContext interface {
 	Query(key string) string
 	Form(key string) string
 	FormFile(key string) (multipart.File, *multipart.FileHeader, error)
+	Get(key string) any
 
 	BodyParser(obj any) error
 	ReadBody() ([]byte, error)

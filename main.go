@@ -11,12 +11,12 @@ func main() {
 	log := logger.NewLogger()
 	defer log.Sync()
 
-	r := router.NewMicroservice()
-	h := handler.NewFiles(log)
+	r := router.NewMicroservice(log)
+	h := handler.NewFiles()
 
 	r.Static("/images")
 
-	r.GET("/{container}", h.GetFiles)
+	r.GET("/files/{container}", h.GetFiles)
 
 	r.POST("/upload", h.UploadMultipart)
 

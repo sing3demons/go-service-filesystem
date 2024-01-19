@@ -87,3 +87,12 @@ func (c *muxContext) FormFile(key string) (multipart.File, *multipart.FileHeader
 	return c.r.FormFile(key)
 }
 
+
+func (ctx *muxContext) Get(key string) any {
+	return ctx.r.Context().Value(key)
+}
+
+func (ctx *muxContext) GetSession(key string) any {
+	return ctx.r.Context().Value(key)
+}
+

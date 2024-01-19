@@ -7,26 +7,28 @@ import (
 	"strings"
 
 	"github.com/sing3demons/service-upload-file/logger"
+	"github.com/sing3demons/service-upload-file/middleware"
 	"github.com/sing3demons/service-upload-file/router"
 )
 
 // Files is a handler for reading and writing files
 type Files struct {
-	log logger.ILogger
 }
 
 // NewFiles creates a new File handler
-func NewFiles(l logger.ILogger) *Files {
-	return &Files{log: l}
+func NewFiles() *Files {
+	return &Files{}
 }
 
 // UploadMultipar something
 func (f *Files) UploadMultipart(ctx router.IContext) {
-	f.log.Info("Handle POST /upload")
+	log := middleware.L(ctx)
+
+	log.Info("Handle POST /upload")
 
 	err := ctx.ParseMultipartForm(128 * 1024)
 	if err != nil {
-		f.log.Error("bad request", logger.LoggerFields{"error": err})
+		log.Error("bad request", logger.LoggerFields{"error": err})
 		// http.Error(rw, "Expected multipart form data", http.StatusBadRequest)
 		ctx.JSON(http.StatusBadRequest, "Expected multipart form data")
 		return
@@ -35,14 +37,14 @@ func (f *Files) UploadMultipart(ctx router.IContext) {
 	id := ctx.Form("container")
 
 	if err != nil {
-		f.log.Error("Bad request", logger.LoggerFields{"error": err})
+		log.Error("Bad request", logger.LoggerFields{"error": err})
 		ctx.JSON(http.StatusBadRequest, "Invalid id, must be an integer")
 		return
 	}
 
 	ff, mh, err := ctx.FormFile("file")
 	if err != nil {
-		f.log.Error("Bad request", logger.LoggerFields{"error": err})
+		log.Error("Bad request", logger.LoggerFields{"error": err})
 		ctx.JSON(http.StatusBadRequest, "Expected file")
 		return
 	}
@@ -53,6 +55,7 @@ func (f *Files) UploadMultipart(ctx router.IContext) {
 }
 
 func (f *Files) GetFiles(ctx router.IContext) {
+	log := middleware.L(ctx)
 	id := ctx.Param("container")
 
 	pathDir, _ := os.Getwd()
@@ -61,7 +64,7 @@ func (f *Files) GetFiles(ctx router.IContext) {
 	// Open the directory
 	dir, err := os.Open(path)
 	if err != nil {
-		f.log.Error("Unable to open directory", logger.LoggerFields{"error": err})
+		log.Error("Unable to open directory", logger.LoggerFields{"error": err})
 		return
 	}
 	defer dir.Close()
@@ -69,7 +72,7 @@ func (f *Files) GetFiles(ctx router.IContext) {
 	// Read the entries in the directory
 	fileInfos, err := dir.Readdir(0)
 	if err != nil {
-		f.log.Error("Error reading directory:", logger.LoggerFields{"error": err})
+		log.Error("Error reading directory:", logger.LoggerFields{"error": err})
 		return
 	}
 
@@ -89,7 +92,7 @@ func (f *Files) GetFiles(ctx router.IContext) {
 
 	}
 
-	f.log.Info("Handle GET", logger.LoggerFields{"container": id, "data": filesList})
+	log.Info("Handle GET", logger.LoggerFields{"container": id, "data": filesList})
 
 	var resp []File
 	for _, file := range filesList {

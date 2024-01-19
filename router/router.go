@@ -14,6 +14,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/sing3demons/service-upload-file/logger"
 )
 
 type IRouter interface {
@@ -32,13 +33,14 @@ type router struct {
 	*mux.Router
 }
 
-func NewMicroservice() IRouter {
+func NewMicroservice(logg logger.ILogger) IRouter {
 	r := mux.NewRouter()
 	mw := GzipHandler{}
 	mw.GzipMiddleware(r)
 
 	r.Use(handlers.RecoveryHandler(handlers.PrintRecoveryStack(true)))
 	r.Use(mw.GzipMiddleware)
+	r.Use(logger.Middleware(logg))
 	return &router{r}
 }
 
