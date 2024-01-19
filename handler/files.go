@@ -15,6 +15,16 @@ import (
 // Files is a handler for reading and writing files
 type Files struct{}
 
+type File struct {
+	ID      string `json:"id,omitempty"`
+	Name    string `json:"name,omitempty"`
+	Size    int64  `json:"size,omitempty"`
+	IsDir   bool   `json:"is_dir,omitempty"`
+	Mode    string `json:"mode,omitempty"`
+	ModTime string `json:"mod_time,omitempty"`
+	Href    string `json:"href,omitempty"`
+}
+
 // NewFiles creates a new File handler
 func NewFiles() *Files {
 	return &Files{}
@@ -37,7 +47,7 @@ func (f *Files) UploadMultipart(ctx router.IContext) {
 	id := ctx.Form("container")
 
 	if err != nil {
-		log.Error("Bad request", logger.LoggerFields{"error": err})
+		log.Error("bad request", logger.LoggerFields{"error": err})
 		ctx.JSON(http.StatusBadRequest, "Invalid id, must be an integer")
 		return
 	}
@@ -107,20 +117,15 @@ func (f *Files) GetFiles(ctx router.IContext) {
 	ctx.JSON(http.StatusOK, resp)
 }
 
-type File struct {
-	ID      string `json:"id,omitempty"`
-	Name    string `json:"name,omitempty"`
-	Size    int64  `json:"size,omitempty"`
-	IsDir   bool   `json:"is_dir,omitempty"`
-	Mode    string `json:"mode,omitempty"`
-	ModTime string `json:"mod_time,omitempty"`
-	Href    string `json:"href,omitempty"`
-}
-
 func (f *Files) GetFile(ctx router.IContext) {
 	log := middleware.L(ctx)
 
 	pwd, err := os.Getwd()
+	if err != nil {
+		log.Error("bad request", logger.LoggerFields{"error": err})
+		ctx.JSON(400, "Invalid id, must be an integer")
+		return
+	}
 
 	streamFileBytes, err := os.ReadFile(filepath.Join(pwd, "imagestore", ctx.Param("container"), ctx.Param("id")))
 	if err != nil {
