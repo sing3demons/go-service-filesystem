@@ -64,6 +64,56 @@ func (f *Files) UploadMultipart(ctx router.IContext) {
 	ctx.JSON(http.StatusOK, fmt.Sprintf("%s/images/%s/%s", os.Getenv("HOST_URL"), id, mh.Filename))
 }
 
+type Entry struct {
+	Name string `json:"name,omitempty"`
+	Href string `json:"href,omitempty"`
+	Info Info   `json:"info,omitempty"`
+}
+
+type Info struct {
+	Name string `json:"name,omitempty"`
+	Size int64  `json:"size,omitempty"`
+}
+
+func (f *Files) GetFolders(ctx router.IContext) {
+	log := middleware.L(ctx)
+
+	pathDir, err := os.Getwd()
+	if err != nil {
+		log.Error("bad request", logger.LoggerFields{"error": err})
+		ctx.JSON(400, "invalid id, must be an integer")
+		return
+	}
+
+	path := pathDir + "/imagestore"
+	entries, err := os.ReadDir(path)
+	if err != nil {
+		log.Error("unable to open directory", logger.LoggerFields{"error": err})
+		return
+	}
+
+	var result []Entry
+	for _, e := range entries {
+		var r Entry
+		info, err := e.Info()
+		if err != nil {
+			log.Error("Unable to open directory", logger.LoggerFields{"error": err})
+			return
+		}
+
+		if info.IsDir() {
+			r.Name = e.Name()
+			r.Href = fmt.Sprintf("%s/files/%s", os.Getenv("HOST_URL"), e.Name())
+			r.Info.Name = info.Name()
+			r.Info.Size = info.Size()
+			result = append(result, r)
+		}
+	}
+
+	log.Info("handle GET", logger.LoggerFields{"data": result})
+	ctx.JSON(http.StatusOK, result)
+}
+
 func (f *Files) GetFiles(ctx router.IContext) {
 	log := middleware.L(ctx)
 	id := ctx.Param("container")

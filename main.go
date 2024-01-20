@@ -32,6 +32,7 @@ func main() {
 		c.JSON(200, "OK")
 	})
 
+	r.GET("/files", h.GetFolders)
 	r.GET("/files/{container}", h.GetFiles)
 
 	r.POST("/upload", h.UploadMultipart)
