@@ -1,12 +1,24 @@
 package main
 
 import (
+	"net/http"
 	"os"
+
+	"github.com/joho/godotenv"
 
 	"github.com/sing3demons/service-upload-file/handler"
 	"github.com/sing3demons/service-upload-file/logger"
+	"github.com/sing3demons/service-upload-file/middleware"
 	"github.com/sing3demons/service-upload-file/router"
 )
+
+func init() {
+	if os.Getenv("ENV_MODE") != "production" {
+		if err := godotenv.Load(".env.dev"); err != nil {
+			panic(err)
+		}
+	}
+}
 
 func main() {
 	_, err := os.Create("/tmp/live")
@@ -14,6 +26,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer os.Remove("/tmp/live")
+
 	log := logger.NewLogger()
 	defer log.Sync()
 
@@ -24,12 +37,9 @@ func main() {
 
 	r.Static("/images")
 
-	r.GET("/", func(c router.IContext) {
-		c.JSON(200, "OK")
-	})
-
 	r.GET("/healthz", func(c router.IContext) {
-		c.JSON(200, "OK")
+		middleware.L(c).Info("healthz")
+		c.JSON(http.StatusOK, "OK")
 	})
 
 	r.GET("/files", h.GetFolders)

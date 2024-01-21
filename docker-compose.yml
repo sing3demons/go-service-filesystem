@@ -11,8 +11,10 @@ services:
     restart: always
     ports:
       - "8080:8080"
-    # links:
-    #   - fluentd
+    environment:
+      - PORT=8080
+      - LOG_LEVEL=INFO
+      - ENV_MODE=production
     logging:
       driver: "fluentd"
       options:
