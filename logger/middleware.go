@@ -11,7 +11,6 @@ import (
 	"go.uber.org/zap"
 )
 
-type contextKey string
 const Key = "logger"
 
 func Middleware(logger ILogger) mux.MiddlewareFunc {
