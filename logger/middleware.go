@@ -34,7 +34,16 @@ func LogParentID(r *http.Request, logger ILogger) ILogger {
 	}
 	xSpan := uuid.NewString()
 
-	return logger.With(zap.Any("headers", GetHeaders(r)), zap.String("parent-id", xParent), zap.String("span-id", xSpan))
+	path := r.URL.Path
+	method := r.Method
+
+	return logger.With(
+		zap.String("path", path),
+		zap.String("method", method),
+		zap.Any("headers", GetHeaders(r)),
+		zap.String("parent-id", xParent),
+		zap.String("span-id", xSpan),
+	)
 }
 
 func setLoggerContext(r *http.Request, val ILogger) *http.Request {
