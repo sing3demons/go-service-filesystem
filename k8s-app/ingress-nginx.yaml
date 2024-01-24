@@ -5,13 +5,14 @@ metadata:
   namespace: go-filesystem
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
+  ingressClassName: nginx
   rules:
   - host: kp.sing3demons
     http:
       paths:
-      - path: /
+      - path: /api(/|$)(.*)
         pathType: Prefix
         backend:
           service:
