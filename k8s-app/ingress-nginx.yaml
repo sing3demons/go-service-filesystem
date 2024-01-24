@@ -1,42 +1,20 @@
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: minimal-ingress
-#   namespace: go-filesystem
-#   annotations:
-#     nginx.ingress.kubernetes.io/rewrite-target: /
-# spec:
-#   ingressClassName: nginx-example
-#   rules:
-#   - http:
-#       paths:
-#       - path: /
-#         pathType: Prefix
-#         backend:
-#           service:
-#             name: go-server
-#             port:
-#               number: 8080
-
-
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: minimal-ingress
-  annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /
-  labels:
-    name: minimal-ingress
+  name: go-server-ingress
   namespace: go-filesystem
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: sing3demons
+  - host: kp.sing3demons
     http:
       paths:
-      - pathType: Prefix
-        path: /api
+      - path: /
+        pathType: Prefix
         backend:
           service:
             name: go-server
-            port: 
+            port:
               number: 8080

@@ -62,13 +62,13 @@ metadata:
   name: go-server
   namespace: go-filesystem
 spec:
-  type: NodePort
+  # type: NodePort
   selector:
     app: server
   ports:
   - port: 8080
     targetPort: 8080
-    nodePort: 30001
+    # nodePort: 30001
     
 # apiVersion: v1
 # kind: Service
