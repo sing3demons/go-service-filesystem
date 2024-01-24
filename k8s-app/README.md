@@ -12,3 +12,8 @@ kubectl apply -f .\ingress-nginx.yaml
 kubectl get po -n go-filesystem
 kubectl -n go-filesystem get svc
 ```
+
+```bash
+kubectl delete -f .
+kubectl delete ns ingress-nginx
+```
